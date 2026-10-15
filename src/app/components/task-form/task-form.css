@@ -1,0 +1,40 @@
+.task-form-container {
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 25px;
+}
+
+.task-form-container h1 {
+  margin-bottom: 25px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-group textarea {
+  min-height: 100px;
+}
+
+.error {
+  display: block;
+  margin-top: 5px;
+  color: red;
+  font-size: 13px;
+}

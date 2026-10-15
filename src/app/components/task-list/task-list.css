@@ -1,0 +1,48 @@
+.task-container {
+  padding: 30px;
+}
+
+.task-container h1 {
+  margin-bottom: 25px;
+}
+
+.filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.filters label {
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+.filters input,
+.filters select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.task-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.task-table th,
+.task-table td {
+  padding: 14px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.task-table th {
+  background-color: #f4f4f4;
+}
+
+.task-table button {
+  padding: 6px 12px;
+  margin-right: 8px;
+  cursor: pointer;
+}
