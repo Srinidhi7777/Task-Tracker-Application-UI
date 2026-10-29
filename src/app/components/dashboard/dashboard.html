@@ -1,4 +1,225 @@
+
 <div class="dashboard-container">
-  <h1>Dashboard</h1>
-  <p>Welcome to Task Tracker</p>
+
+  <div class="dashboard-heading">
+    <h1>Dashboard</h1>
+    <p>Welcome back! Here's an overview of your tasks.</p>
+  </div>
+
+  <!-- Summary cards -->
+
+  <div class="dashboard-cards">
+
+    <div class="summary-card total-card">
+      <div class="summary-icon total-icon">
+        <svg viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="4" width="14" height="17" rx="2"/>
+          <path d="M9 4.5h6M9 10h6M9 14h6"/>
+        </svg>
+      </div>
+      <div>
+        <span>Total Tasks</span>
+        <strong>{{ totalTasks }}</strong>
+      </div>
+    </div>
+
+    <div class="summary-card pending-card">
+      <div class="summary-icon pending-icon">
+        <svg viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+      </div>
+      <div>
+        <span>Pending</span>
+        <strong>{{ pendingTasks }}</strong>
+      </div>
+    </div>
+
+    <div class="summary-card progress-card">
+      <div class="summary-icon progress-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </div>
+      <div>
+        <span>In Progress</span>
+        <strong>{{ inProgressTasks }}</strong>
+      </div>
+    </div>
+
+    <div class="summary-card completed-card">
+      <div class="summary-icon completed-icon">
+        <svg viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12l5 5L20 7"/>
+        </svg>
+      </div>
+      <div>
+        <span>Completed</span>
+        <strong>{{ completedTasks }}</strong>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Charts -->
+
+  <div class="charts-grid">
+
+    <section class="chart-card">
+      <h2>Tasks by Status</h2>
+
+      <div class="status-chart-content">
+
+        <div class="donut-chart"
+             [style.background]="donutGradient"
+             role="img"
+             [attr.aria-label]="'Task status chart: ' + pendingTasks + ' pending, ' + inProgressTasks + ' in progress, ' + completedTasks + ' completed'">
+          <div class="donut-center">
+            <strong>{{ totalTasks }}</strong>
+            <span>Total</span>
+          </div>
+        </div>
+
+        <div class="chart-legend">
+
+          <div class="legend-row">
+            <span class="legend-dot pending-dot"></span>
+            <span>Pending</span>
+            <strong>{{ pendingTasks }}
+              ({{ getRoundedPercentage(pendingTasks) }}%)</strong>
+          </div>
+
+          <div class="legend-row">
+            <span class="legend-dot progress-dot"></span>
+            <span>In Progress</span>
+            <strong>{{ inProgressTasks }}
+              ({{ getRoundedPercentage(inProgressTasks) }}%)</strong>
+          </div>
+
+          <div class="legend-row">
+            <span class="legend-dot completed-dot"></span>
+            <span>Completed</span>
+            <strong>{{ completedTasks }}
+              ({{ getRoundedPercentage(completedTasks) }}%)</strong>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <section class="chart-card">
+      <h2>Tasks by Priority</h2>
+
+      <div class="bar-chart">
+
+        <div class="bar-item">
+          <div class="bar-track">
+            <div class="bar high-bar"
+                 [style.height.%]="getPriorityHeight(highPriorityTasks)">
+              @if (highPriorityTasks > 0) {
+                <span>{{ highPriorityTasks }}</span>
+              }
+            </div>
+          </div>
+          <span>High</span>
+        </div>
+
+        <div class="bar-item">
+          <div class="bar-track">
+            <div class="bar medium-bar"
+                 [style.height.%]="getPriorityHeight(mediumPriorityTasks)">
+              @if (mediumPriorityTasks > 0) {
+                <span>{{ mediumPriorityTasks }}</span>
+              }
+            </div>
+          </div>
+          <span>Medium</span>
+        </div>
+
+        <div class="bar-item">
+          <div class="bar-track">
+            <div class="bar low-bar"
+                 [style.height.%]="getPriorityHeight(lowPriorityTasks)">
+              @if (lowPriorityTasks > 0) {
+                <span>{{ lowPriorityTasks }}</span>
+              }
+            </div>
+          </div>
+          <span>Low</span>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Recent tasks -->
+
+  <section class="recent-tasks-section">
+
+    <div class="section-heading">
+      <h2>Recent Tasks</h2>
+      <a routerLink="/tasks">View All</a>
+    </div>
+
+    <div class="recent-table-card">
+      <div class="recent-table-scroll">
+        <table class="recent-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Task</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Due Date</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (task of recentTasks; track task.id) {
+              <tr>
+                <td>{{ $index + 1 }}</td>
+                <td class="recent-task-name">{{ task.title }}</td>
+
+                <td>
+                  <span class="priority-badge"
+                    [class.priority-high]="task.priority === 'High'"
+                    [class.priority-medium]="task.priority === 'Medium'"
+                    [class.priority-low]="task.priority === 'Low'">
+                    {{ task.priority }}
+                  </span>
+                </td>
+
+                <td>
+                  <span class="status-badge"
+                    [class.status-pending]="task.status === 'Pending'"
+                    [class.status-progress]="task.status === 'In Progress'"
+                    [class.status-completed]="task.status === 'Completed'">
+                    {{ task.status }}
+                  </span>
+                </td>
+
+                <td>{{ formatDate(task.dueDate) }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="empty-state">
+                  No tasks available.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+
 </div>

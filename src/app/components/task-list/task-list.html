@@ -1,68 +1,242 @@
+
 <div class="task-container">
 
-  <h1>My Tasks</h1>
-
-  <div class="filters">
+  <div class="page-heading">
     <div>
-      <label>Search:</label>
-      <input type="text" placeholder="Search tasks">
+      <h1>My Tasks</h1>
+      <p>View, search and manage your tasks.</p>
     </div>
 
-    <div>
-      <label>Status:</label>
-      <select>
-        <option>All</option>
-        <option>Pending</option>
-        <option>In Progress</option>
-        <option>Completed</option>
+    <button
+      type="button"
+      class="add-task-btn"
+      (click)="addTask()">
+      <span class="plus-icon">+</span>
+      Add New Task
+    </button>
+  </div>
+
+  @if (successMessage) {
+    <div class="toast toast-success" role="status">
+      <span>✓ {{ successMessage }}</span>
+      <button type="button"
+              aria-label="Close notification"
+              (click)="closeToast()">×</button>
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="toast toast-error" role="alert">
+      <span>✕ {{ errorMessage }}</span>
+      <button type="button"
+              aria-label="Close notification"
+              (click)="closeToast()">×</button>
+    </div>
+  }
+
+  <div class="filter-panel">
+
+    <div class="filter-search">
+      <label for="taskSearch">Search</label>
+
+      <div class="search-input-wrapper">
+        <svg viewBox="0 0 24 24"
+             width="20" height="20"
+             fill="none" stroke="currentColor"
+             stroke-width="2"
+             aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="m16 16 5 5"></path>
+        </svg>
+
+        <input
+          id="taskSearch"
+          type="text"
+          placeholder="Search tasks..."
+          [(ngModel)]="searchText"
+          (ngModelChange)="onFilterChange()"
+        />
+      </div>
+    </div>
+
+    <div class="filter-field">
+      <label for="statusFilter">Status</label>
+      <select
+        id="statusFilter"
+        [(ngModel)]="selectedStatus"
+        (ngModelChange)="onFilterChange()">
+        <option value="All">All</option>
+        <option value="Pending">Pending</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
       </select>
+    </div>
+
+    <div class="filter-field">
+      <label for="priorityFilter">Priority</label>
+      <select
+        id="priorityFilter"
+        [(ngModel)]="selectedPriority"
+        (ngModelChange)="onFilterChange()">
+        <option value="All">All</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+    </div>
+
+    <button
+      type="button"
+      class="clear-btn"
+      (click)="clearFilters()">
+      Clear
+    </button>
+
+  </div>
+
+  <div class="task-table-card">
+    <div class="table-scroll">
+
+      <table class="task-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Task</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Due Date</th>
+            <th>Assigned To</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (task of paginatedTasks; track task.id) {
+            <tr>
+              <td class="row-number">
+                {{ (currentPage - 1) * pageSize + $index + 1 }}
+              </td>
+
+              <td>
+                <div class="task-title">{{ task.title }}</div>
+                <div class="task-description">
+                  {{ task.description }}
+                </div>
+              </td>
+
+              <td>
+                <span class="priority-badge"
+                  [class.priority-high]="task.priority === 'High'"
+                  [class.priority-medium]="task.priority === 'Medium'"
+                  [class.priority-low]="task.priority === 'Low'">
+                  {{ task.priority }}
+                </span>
+              </td>
+
+              <td>
+                <span class="status-badge"
+                  [class.status-completed]="task.status === 'Completed'"
+                  [class.status-progress]="task.status === 'In Progress'"
+                  [class.status-pending]="task.status === 'Pending'">
+                  {{ task.status }}
+                </span>
+              </td>
+
+              <td class="due-date">
+                {{ formatDate(task.dueDate) }}
+              </td>
+
+              <td class="assigned-to">
+                {{ task.assignedToName || '-' }}
+              </td>
+
+              <td>
+                <div class="action-buttons">
+
+                  <button
+                    type="button"
+                    class="icon-btn edit-btn"
+                    title="Edit Task"
+                    [attr.aria-label]="'Edit ' + task.title"
+                    (click)="editTask(task.id)">
+                    <svg viewBox="0 0 24 24"
+                         width="18" height="18"
+                         fill="none" stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+                      <path d="M12 20h9"></path>
+                      <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L9 17l-4 1 1-4z"></path>
+                    </svg>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="icon-btn delete-btn"
+                    title="Delete Task"
+                    [attr.aria-label]="'Delete ' + task.title"
+                    (click)="deleteTask(task.id)">
+                    <svg viewBox="0 0 24 24"
+                         width="18" height="18"
+                         fill="none" stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+                      <path d="M3 6h18"></path>
+                      <path d="M8 6V4h8v2"></path>
+                      <path d="M5 6l1 15h12l1-15"></path>
+                      <path d="M10 10v7"></path>
+                      <path d="M14 10v7"></path>
+                    </svg>
+                  </button>
+
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="empty-state">
+                No tasks found. Try changing your filters.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+    </div>
+
+    <div class="table-footer">
+      <span class="task-count">
+        Showing {{ startTaskNumber }} to {{ endTaskNumber }}
+        of {{ filteredTasks.length }} tasks
+      </span>
+
+      <div class="pagination">
+        <button
+          type="button"
+          class="page-arrow"
+          aria-label="Previous page"
+          (click)="previousPage()"
+          [disabled]="currentPage === 1">
+          ‹
+        </button>
+
+        <span class="current-page">
+          {{ currentPage }}
+        </span>
+
+        <button
+          type="button"
+          class="page-arrow"
+          aria-label="Next page"
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages">
+          ›
+        </button>
+      </div>
     </div>
   </div>
 
- <table class="task-table">
-  <thead>
-    <tr>
-      <th>Task</th>
-      <th>Priority</th>
-      <th>Status</th>
-      <th>Due Date</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <tr>
-      <td>Login API</td>
-      <td>High</td>
-      <td>Completed</td>
-      <td>05-Oct-2026</td>
-      <td>
-        <button>Edit</button>
-        <button>Delete</button>
-      </td>
-    </tr>
-
-    <tr>
-      <td>Dashboard UI</td>
-      <td>Medium</td>
-      <td>In Progress</td>
-      <td>08-Oct-2026</td>
-      <td>
-        <button>Edit</button>
-        <button>Delete</button>
-      </td>
-    </tr>
-
-    <tr>
-      <td>Validation</td>
-      <td>Low</td>
-      <td>Pending</td>
-      <td>10-Oct-2026</td>
-      <td>
-        <button>Edit</button>
-        <button>Delete</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
 </div>

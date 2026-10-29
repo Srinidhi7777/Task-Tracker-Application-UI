@@ -1,11 +1,14 @@
+
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Navbar } from './components/navbar/navbar';
+import { Navbar } from './shared/navbar/navbar';
+import { Sidebar } from './shared/sidebar/sidebar';
+
 @Component({
-  imports: [RouterOutlet, Navbar],
   selector: 'app-root',
-  styleUrl: './app.css',
+  imports: [RouterOutlet, Navbar, Sidebar],
   templateUrl: './app.html',
+  styleUrl: './app.css'
 })
 export class App {
   protected readonly title = signal('task-tracker-ui');

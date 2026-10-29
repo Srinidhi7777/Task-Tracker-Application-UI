@@ -1,0 +1,193 @@
+
+<div class="members-page">
+
+  <div class="page-header">
+    <div>
+      <h2>Team Members</h2>
+      <p>Manage your project team members.</p>
+    </div>
+
+    <button
+      type="button"
+      class="btn-primary"
+      (click)="openAddForm()">
+      + Add New Member
+    </button>
+  </div>
+
+  @if (successMessage()) {
+    <div class="alert alert-success">
+      {{ successMessage() }}
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  @if (showAddForm()) {
+    <div class="form-card">
+      <div class="form-heading">
+        <h3>
+          {{ editingMemberId() !== null
+            ? 'Edit Team Member'
+            : 'Add New Member' }}
+        </h3>
+      </div>
+
+      <form [formGroup]="memberForm" (ngSubmit)="saveMember()">
+
+        <div class="form-grid">
+
+          <div class="form-field">
+            <label for="memberName">Full Name</label>
+            <input
+              id="memberName"
+              type="text"
+              formControlName="name"
+              placeholder="Enter full name" />
+
+            @if (memberForm.get('name')?.touched &&
+                 memberForm.get('name')?.invalid) {
+              <small class="field-error">
+                Enter a name (maximum 100 characters).
+              </small>
+            }
+          </div>
+
+          <div class="form-field">
+            <label for="memberEmail">Email Address</label>
+            <input
+              id="memberEmail"
+              type="email"
+              formControlName="email"
+              placeholder="Enter email address" />
+
+            @if (memberForm.get('email')?.touched &&
+                 memberForm.get('email')?.invalid) {
+              <small class="field-error">
+                Enter a valid email address.
+              </small>
+            }
+          </div>
+
+          <div class="form-field">
+            <label for="memberRole">Role</label>
+            <input
+              id="memberRole"
+              type="text"
+              formControlName="role"
+              placeholder="Example: Developer" />
+
+            @if (memberForm.get('role')?.touched &&
+                 memberForm.get('role')?.invalid) {
+              <small class="field-error">
+                Enter a role (maximum 50 characters).
+              </small>
+            }
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn-secondary"
+            (click)="cancelForm()">
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="saving()">
+            {{ saving()
+              ? 'Saving...'
+              : editingMemberId() !== null
+                ? 'Update Member'
+                : 'Save Member' }}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  }
+
+  <div class="table-card">
+
+    <div class="table-header">
+      <h3>All Team Members</h3>
+      <span class="member-count">
+        {{ members().length }} Members
+      </span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="members-table">
+        <thead>
+          <tr>
+            <th>Member</th>
+            <th>Email Address</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (member of members(); track member.id) {
+            <tr>
+              <td>
+                <div class="member-info">
+                  <div class="member-avatar">
+                    {{ member.name.charAt(0).toUpperCase() }}
+                  </div>
+                  <span class="member-name">
+                    {{ member.name }}
+                  </span>
+                </div>
+              </td>
+
+              <td>{{ member.email }}</td>
+
+              <td>
+                <span class="role-badge">
+                  {{ member.role }}
+                </span>
+              </td>
+
+              <td>
+                <div class="action-buttons">
+                  <button
+                    type="button"
+                    class="btn-edit"
+                    (click)="editMember(member)">
+                    Edit
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn-delete"
+                    [disabled]="deletingMemberId() !== null"
+                    (click)="deleteMember(member)">
+                    {{ deletingMemberId() === member.id
+                      ? 'Deleting...'
+                      : 'Delete' }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="empty-state">
+                No team members found. Add your first member!
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>

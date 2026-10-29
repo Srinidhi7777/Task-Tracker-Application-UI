@@ -1,0 +1,40 @@
+
+.navbar {
+  height: 78px;
+  background: linear-gradient(110deg, #3677b9, #235996);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 35px;
+  box-sizing: border-box;
+}
+
+.navbar-brand {
+  font-size: 27px;
+  font-weight: 700;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.user-avatar {
+  width: 42px;
+  height: 42px;
+  background: white;
+  color: #235996;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.dropdown-arrow {
+  font-size: 22px;
+}

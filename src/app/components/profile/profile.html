@@ -1,0 +1,110 @@
+
+<div class="profile-container">
+
+  <div class="profile-heading">
+    <h1>My Profile</h1>
+    <p>View and manage your personal information.</p>
+  </div>
+
+  <div class="profile-card">
+
+    <div class="profile-banner"></div>
+
+    <div class="profile-content">
+
+      <div class="profile-header">
+
+        <div class="profile-avatar">
+          {{ initials }}
+        </div>
+
+        <div class="profile-identity">
+          <h2>{{ user.name }}</h2>
+          <p>{{ user.email }}</p>
+          <span class="role-badge">{{ user.role }}</span>
+        </div>
+
+        @if (!isEditMode) {
+          <button
+            type="button"
+            class="edit-btn"
+            (click)="editProfile()">
+            ✎ Edit Profile
+          </button>
+        }
+
+      </div>
+
+      <div class="details-section">
+
+        <h3>Personal Information</h3>
+
+        <div class="details-grid">
+
+          <div class="detail-item">
+            <label>Full Name</label>
+
+            @if (isEditMode) {
+              <input
+                type="text"
+                [value]="user.name"
+                #nameInput>
+            } @else {
+              <p>{{ user.name }}</p>
+            }
+          </div>
+
+          <div class="detail-item">
+            <label>Email Address</label>
+            <p>{{ user.email }}</p>
+          </div>
+
+          <div class="detail-item">
+            <label>Role</label>
+            <p>{{ user.role }}</p>
+          </div>
+
+          <div class="detail-item">
+            <label>Department</label>
+            <p>{{ user.department }}</p>
+          </div>
+
+          <div class="detail-item">
+            <label>Location</label>
+            <p>{{ user.location }}</p>
+          </div>
+
+          <div class="detail-item">
+            <label>Joined Date</label>
+            <p>{{ user.joinedDate }}</p>
+          </div>
+
+        </div>
+
+        @if (isEditMode) {
+          <div class="profile-actions">
+
+            <button
+              type="button"
+              class="cancel-btn"
+              (click)="cancelEdit()">
+              Cancel
+            </button>
+
+            <button
+              type="button"
+              class="save-btn"
+              (click)="saveProfile()">
+              Save Changes
+            </button>
+
+          </div>
+        }
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

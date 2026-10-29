@@ -6,4 +6,5 @@ export interface Task {
   status: string;
   dueDate: string;
   assignedToId: number;
+  assignedToName?: string;
 }

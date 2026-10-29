@@ -1,137 +1,177 @@
+
 <div class="task-form-container">
 
-  <h1>Create Task</h1>
+  <div class="form-heading">
+    <h1>{{ isEditMode ? 'Edit Task' : 'Add New Task' }}</h1>
+    <p>
+      {{ isEditMode
+        ? 'Update the task details below.'
+        : 'Create a new task by filling in the details below.' }}
+    </p>
+  </div>
 
-  <form [formGroup]="taskForm">
+  <div class="form-card">
 
-    <!-- Title -->
-    <div class="form-group">
-      <label for="title">Title</label>
+    <form [formGroup]="taskForm" (ngSubmit)="saveTask()">
 
-      <input
-        id="title"
-        type="text"
-        formControlName="title"
-        placeholder="Enter task title">
+      <!-- Task Title -->
+      <div class="form-group">
+        <label for="title">
+          Task Title <span class="required">*</span>
+        </label>
 
-      @if (taskForm.get('title')?.touched &&
-           taskForm.get('title')?.hasError('required')) {
-        <small class="error">
-          Title is required.
-        </small>
-      }
-    </div>
+        <input
+          id="title"
+          type="text"
+          formControlName="title"
+          placeholder="Enter task title"
+          [class.invalid]="taskForm.get('title')?.touched &&
+                             taskForm.get('title')?.invalid">
 
+        @if (taskForm.get('title')?.touched &&
+             taskForm.get('title')?.hasError('required')) {
+          <small class="error">Task title is required.</small>
+        }
+      </div>
 
-    <!-- Description -->
-    <div class="form-group">
-      <label for="description">Description</label>
+      <!-- Description -->
+      <div class="form-group">
+        <label for="description">
+          Description <span class="required">*</span>
+        </label>
 
-      <textarea
-        id="description"
-        formControlName="description"
-        placeholder="Enter task description">
-      </textarea>
+        <textarea
+          id="description"
+          formControlName="description"
+          placeholder="Enter task description..."
+          rows="4"
+          [class.invalid]="taskForm.get('description')?.touched &&
+                             taskForm.get('description')?.invalid"></textarea>
 
-      @if (taskForm.get('description')?.touched &&
-           taskForm.get('description')?.hasError('required')) {
-        <small class="error">
-          Description is required.
-        </small>
-      }
-    </div>
+        @if (taskForm.get('description')?.touched &&
+             taskForm.get('description')?.hasError('required')) {
+          <small class="error">Description is required.</small>
+        }
+      </div>
 
+      <!-- Priority and Status -->
+      <div class="form-row">
 
-    <!-- Priority -->
-    <div class="form-group">
-      <label for="priority">Priority</label>
+        <div class="form-group">
+          <label for="priority">
+            Priority <span class="required">*</span>
+          </label>
 
-      <select
-        id="priority"
-        formControlName="priority">
+          <select
+            id="priority"
+            formControlName="priority"
+            [class.invalid]="taskForm.get('priority')?.touched &&
+                               taskForm.get('priority')?.invalid">
+            <option value="">Select priority</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
 
-        <option value="">Select Priority</option>
-        <option value="High">High</option>
-        <option value="Medium">Medium</option>
-        <option value="Low">Low</option>
+          @if (taskForm.get('priority')?.touched &&
+               taskForm.get('priority')?.hasError('required')) {
+            <small class="error">Priority is required.</small>
+          }
+        </div>
 
-      </select>
+        <div class="form-group">
+          <label for="status">
+            Status <span class="required">*</span>
+          </label>
 
-      @if (taskForm.get('priority')?.touched &&
-           taskForm.get('priority')?.hasError('required')) {
-        <small class="error">
-          Priority is required.
-        </small>
-      }
-    </div>
+          <select
+            id="status"
+            formControlName="status"
+            [class.invalid]="taskForm.get('status')?.touched &&
+                               taskForm.get('status')?.invalid">
+            <option value="">Select status</option>
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+          </select>
 
+          @if (taskForm.get('status')?.touched &&
+               taskForm.get('status')?.hasError('required')) {
+            <small class="error">Status is required.</small>
+          }
+        </div>
 
-    <!-- Status -->
-    <div class="form-group">
-      <label for="status">Status</label>
+      </div>
 
-      <select
-        id="status"
-        formControlName="status">
+      <!-- Assigned To and Due Date -->
+      <div class="form-row">
 
-        <option value="">Select Status</option>
-        <option value="Pending">Pending</option>
-        <option value="In Progress">In Progress</option>
-        <option value="Completed">Completed</option>
+        <div class="form-group">
+          <label for="assignedToId">
+            Assigned To <span class="required">*</span>
+          </label>
 
-      </select>
+          <select
+            id="assignedToId"
+            formControlName="assignedToId"
+            [class.invalid]="taskForm.get('assignedToId')?.touched &&
+                               taskForm.get('assignedToId')?.invalid">
 
-      @if (taskForm.get('status')?.touched &&
-           taskForm.get('status')?.hasError('required')) {
-        <small class="error">
-          Status is required.
-        </small>
-      }
-    </div>
+            <option [ngValue]="null">Select team member</option>
 
+            @for (member of teamMembers; track member.id) {
+              <option [ngValue]="member.id">
+                {{ member.name }}
+              </option>
+            }
+          </select>
 
-    <!-- Assigned To -->
-    <div class="form-group">
-      <label for="assignedToId">Assigned To</label>
+          @if (taskForm.get('assignedToId')?.touched &&
+               taskForm.get('assignedToId')?.hasError('required')) {
+            <small class="error">Assigned To is required.</small>
+          }
+        </div>
 
-      <select
-        id="assignedToId"
-        formControlName="assignedToId">
+        <div class="form-group">
+          <label for="dueDate">
+            Due Date <span class="required">*</span>
+          </label>
 
-        <option value="">Select Team Member</option>
+          <input
+            id="dueDate"
+            type="date"
+            formControlName="dueDate"
+            [class.invalid]="taskForm.get('dueDate')?.touched &&
+                               taskForm.get('dueDate')?.invalid">
 
-        <!-- Temporary data -->
-        <option value="1">Sandhiya</option>
-        <option value="2">Sri</option>
+          @if (taskForm.get('dueDate')?.touched &&
+               taskForm.get('dueDate')?.hasError('required')) {
+            <small class="error">Due Date is required.</small>
+          }
+        </div>
 
-      </select>
+      </div>
 
-      @if (taskForm.get('assignedToId')?.touched &&
-           taskForm.get('assignedToId')?.hasError('required')) {
-        <small class="error">
-          Assigned To is required.
-        </small>
-      }
-    </div>
+      <!-- Form Buttons -->
+      <div class="form-actions">
 
+        <button
+          type="button"
+          class="cancel-btn"
+          (click)="cancel()">
+          Cancel
+        </button>
 
-    <!-- Due Date -->
-    <div class="form-group">
-      <label for="dueDate">Due Date</label>
+        <button
+          type="submit"
+          class="save-btn">
+          {{ isEditMode ? 'Update Task' : 'Save Task' }}
+        </button>
 
-      <input
-        id="dueDate"
-        type="date"
-        formControlName="dueDate">
+      </div>
 
-      @if (taskForm.get('dueDate')?.touched &&
-           taskForm.get('dueDate')?.hasError('required')) {
-        <small class="error">
-          Due Date is required.
-        </small>
-      }
-    </div>
+    </form>
 
-  </form>
+  </div>
 
 </div>
